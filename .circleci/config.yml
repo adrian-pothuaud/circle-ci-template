@@ -16,21 +16,21 @@ jobs:
       - image: circleci/buildpack-deps
     steps:
       - run:
-        name: start rec
-        command: echo push to heroku rec
+          name: start rec
+          command: echo push to heroku rec
       - run:
-        name: test rec
-        command: echo test rec
+          name: test rec
+          command: echo test rec
   deploy:
     docker:
       - image: circleci/buildpack-deps
     steps:
       - run:
-        name: start prod
-        command: echo push to heroku prod
+          name: start prod
+          command: echo push to heroku prod
       - run:
-        name: test prod
-        command: echo test prod
+          name: test prod
+          command: echo test prod
 
 workflows:
   version: 2
