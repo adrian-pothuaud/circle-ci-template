@@ -1,13 +1,27 @@
 version: 2
 jobs:
   build:
-    docker:
-      - image: debian:stretch
     steps:
       - checkout
       - run:
-          name: Greeting
-          command: echo Hello, world.
+          name: start local
+          command: echo starting in local
       - run:
-          name: Print the Current Time
-          command: date
+          name: test local
+          command: echo test in local
+  test:
+    steps:
+      - run:
+        name: start rec
+        command: echo push to heroku rec
+      - run:
+        name: test rec
+        command: echo test rec
+  deploy:
+    steps:
+      - run:
+        name: start prod
+        command: echo push to heroku prod
+      - run:
+        name: test prod
+        command: echo test prod
