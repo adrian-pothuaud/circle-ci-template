@@ -11,7 +11,7 @@ jobs:
       - run:
           name: test local
           command: echo test in local
-  acceptance_test:
+  unit_tests:
     docker:
       - image: circleci/buildpack-deps
     steps:
@@ -21,7 +21,37 @@ jobs:
       - run:
           name: test rec
           command: echo test rec
-  deploy:
+  integration_tests:
+    docker:
+      - image: circleci/buildpack-deps
+    steps:
+      - run:
+          name: start rec
+          command: echo push to heroku rec
+      - run:
+          name: test rec
+          command: echo test rec
+  acceptance_tests:
+    docker:
+      - image: circleci/buildpack-deps
+    steps:
+      - run:
+          name: start rec
+          command: echo push to heroku rec
+      - run:
+          name: test rec
+          command: echo test rec
+  end_to_end_tests:
+    docker:
+      - image: circleci/buildpack-deps
+    steps:
+      - run:
+          name: start rec
+          command: echo push to heroku rec
+      - run:
+          name: test rec
+          command: echo test rec
+  deploy_rec:
     docker:
       - image: circleci/buildpack-deps
     steps:
@@ -31,15 +61,147 @@ jobs:
       - run:
           name: test prod
           command: echo test prod
+  unit_tests_rec:
+    docker:
+      - image: circleci/buildpack-deps
+    steps:
+      - run:
+          name: start rec
+          command: echo push to heroku rec
+      - run:
+          name: test rec
+          command: echo test rec
+  integration_tests_rec:
+    docker:
+      - image: circleci/buildpack-deps
+    steps:
+      - run:
+          name: start rec
+          command: echo push to heroku rec
+      - run:
+          name: test rec
+          command: echo test rec
+  acceptance_tests_rec:
+    docker:
+      - image: circleci/buildpack-deps
+    steps:
+      - run:
+          name: start rec
+          command: echo push to heroku rec
+      - run:
+          name: test rec
+          command: echo test rec
+  end_to_end_tests_rec:
+    docker:
+      - image: circleci/buildpack-deps
+    steps:
+      - run:
+          name: start rec
+          command: echo push to heroku rec
+      - run:
+          name: test rec
+          command: echo test rec
+  deploy_prod:
+    docker:
+      - image: circleci/buildpack-deps
+    steps:
+      - run:
+          name: start prod
+          command: echo push to heroku prod
+      - run:
+          name: test prod
+          command: echo test prod
+  unit_tests_prod:
+    docker:
+      - image: circleci/buildpack-deps
+    steps:
+      - run:
+          name: start rec
+          command: echo push to heroku rec
+      - run:
+          name: test rec
+          command: echo test rec
+  integration_tests_prod:
+    docker:
+      - image: circleci/buildpack-deps
+    steps:
+      - run:
+          name: start rec
+          command: echo push to heroku rec
+      - run:
+          name: test rec
+          command: echo test rec
+  acceptance_tests_prod:
+    docker:
+      - image: circleci/buildpack-deps
+    steps:
+      - run:
+          name: start rec
+          command: echo push to heroku rec
+      - run:
+          name: test rec
+          command: echo test rec
+  end_to_end_tests_prod:
+    docker:
+      - image: circleci/buildpack-deps
+    steps:
+      - run:
+          name: start rec
+          command: echo push to heroku rec
+      - run:
+          name: test rec
+          command: echo test rec
 
 workflows:
   version: 2
   build_accept_deploy:
     jobs:
       - build
-      - acceptance_test:
+      - unit_tests:
           requires:
             - build
-      - deploy:
+      - integration_tests:
           requires:
+            - build
+      - acceptance_tests:
+          requires:
+            - build
+      - end_to_end_tests:
+          requires:
+            - build
+      - deploy_rec:
+          requires:
+            - unit_tests
+            - integration_tests
             - acceptance_test
+            - end_to_end_tests
+      - unit_tests_rec:
+          requires:
+            - deploy_rec
+      - integration_tests_rec:
+          requires:
+            - deploy_rec
+      - acceptance_tests_rec:
+          requires:
+            - deploy_rec
+      - end_to_end_tests_rec:
+          requires:
+            - deploy_rec
+      - deploy_prod:
+          requires:
+            - unit_tests_rec
+            - integration_tests_rec
+            - acceptance_tests_rec
+            - end_to_end_tests_rec
+      - unit_tests_prod:
+          requires:
+            - deploy_prod
+      - integration_tests_prod:
+          requires:
+            - deploy_prod
+      - acceptance_tests_prod:
+          requires:
+            - deploy_prod
+      - end_to_end_tests_prod:
+          requires:
+            - deploy_prod
