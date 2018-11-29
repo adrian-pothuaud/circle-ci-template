@@ -33,7 +33,8 @@ jobs:
         command: echo test prod
 
 workflows:
-  "Template Workflow":
+  version: 2
+  Template Workflow:
     jobs:
       - build
       - test
