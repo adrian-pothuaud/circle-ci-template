@@ -12,6 +12,8 @@ jobs:
           name: test local
           command: echo test in local
   acceptance_test:
+    docker:
+      - image: circleci/buildpack-deps
     steps:
       - run:
           name: start rec
@@ -20,6 +22,8 @@ jobs:
           name: test rec
           command: echo test rec
   deploy:
+    docker:
+      - image: circleci/buildpack-deps
     steps:
       - run:
           name: start prod
