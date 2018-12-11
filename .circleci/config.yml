@@ -5,12 +5,12 @@ jobs:
     docker:
       - image: circleci/openjdk:8u181-jdk-node-browsers-legacy
     steps:
-      - clone_clickclack_web
-      - run:
+      - clone_clickclack_web:
+        - run:
           name: clone command
           command: git clone --branch "master" --depth 50 git@github.com:thorium-e2e/clickclack-web.git ~/clickclack-web
-      - push_heroku_qa
-      - run:
+      - push_heroku_qa:
+        - run:
           name: push qa command
           command: git push https://heroku:3a12d835-fb52-4977-946b-7a0c30a0bad5@git.heroku.com/rec-clickclack-web.git master
   accept:
@@ -18,12 +18,12 @@ jobs:
     docker:
       - image: circleci/openjdk:8u181-jdk-node-browsers-legacy
     steps:
-      - clone_clickclack_web_tests
-      - run:
+      - clone_clickclack_web_tests:
+        - run:
           name: clone command
           command: git clone --branch "master" --depth 50 git@github.com:thorium-e2e/clickclack-web-tests.git ~/clickclack-web-tests
-      - maven_test
-      - run:
+      - maven_test:
+        - run:
           name: mvn test
           command: mvn test
 
@@ -32,8 +32,8 @@ jobs:
     docker:
       - image: circleci/openjdk:8u181-jdk-node-browsers-legacy
     steps:
-      - push_heroku_prod
-      - run:
+      - push_heroku_prod:
+        - run:
           name: push qa command
           command: git push https://heroku:3a12d835-fb52-4977-946b-7a0c30a0bad5@git.heroku.com/clickclack-web.git master
 
