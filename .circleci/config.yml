@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  deploy_qa:
+  build:
     working_directory: ~/clickclack-web
     docker:
       - image: circleci/openjdk:8u181-jdk-node-browsers-legacy
@@ -13,7 +13,7 @@ jobs:
       - run:
           name: push qa command
           command: git push https://heroku:3a12d835-fb52-4977-946b-7a0c30a0bad5@git.heroku.com/rec-clickclack-web.git master
-  tests:
+  accept:
     working_directory: ~/clickclack-web-tests
     docker:
       - image: circleci/openjdk:8u181-jdk-node-browsers-legacy
@@ -27,7 +27,7 @@ jobs:
           name: mvn test
           command: mvn test
 
-  deploy_prod:
+  deploy:
     working_directory: ~/clickclack-web
     docker:
       - image: circleci/openjdk:8u181-jdk-node-browsers-legacy
@@ -42,10 +42,10 @@ workflows:
   version: 2
   build_accept_deploy:
     jobs:
-      - deploy_qa
-      - tests:
+      - build
+      - accept:
           requires:
-            - deploy_qa
-      - deploy_prod:
+            - build
+      - deploy:
           requires:
-            - tests
+            - accept
