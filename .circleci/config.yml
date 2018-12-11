@@ -14,6 +14,9 @@ jobs:
     steps:
       - run: mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config && git clone --branch "master" --depth 50 git@github.com:thorium-e2e/clickclack-web-tests.git ~/clickclack-web-tests
       - run: mvn test
+      - store_artifacts:
+        path: /home/circleci/clickclack-web-tests/target/surefire-reports
+        destination: surefire-reports
 
   deploy:
     working_directory: ~/clickclack-web
