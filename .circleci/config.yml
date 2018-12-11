@@ -3,14 +3,14 @@ jobs:
   build:
     working_directory: ~/clickclack-web
     docker:
-      - image: circleci/circleci/openjdk:8-jdk-browsers
+      - image: circleci/openjdk:8-jdk-browsers
     steps:
       - run: mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config && git clone --branch "master" --depth 50 git@github.com:thorium-e2e/clickclack-web.git ~/clickclack-web
       - run: git push https://heroku:3a12d835-fb52-4977-946b-7a0c30a0bad5@git.heroku.com/rec-clickclack-web.git master
   accept:
     working_directory: ~/clickclack-web-tests
     docker:
-      - image: circleci/circleci/openjdk:8-jdk-browsers
+      - image: circleci/openjdk:8-jdk-browsers
     steps:
       - run: mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config && git clone --branch "master" --depth 50 git@github.com:thorium-e2e/clickclack-web-tests.git ~/clickclack-web-tests
       - run: mvn test
@@ -18,7 +18,7 @@ jobs:
   deploy:
     working_directory: ~/clickclack-web
     docker:
-      - image: circleci/circleci/openjdk:8-jdk-browsers
+      - image: circleci/openjdk:8-jdk-browsers
     steps:
       - run: git push https://heroku:3a12d835-fb52-4977-946b-7a0c30a0bad5@git.heroku.com/clickclack-web.git master
 
