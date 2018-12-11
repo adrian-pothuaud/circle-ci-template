@@ -1,208 +1,51 @@
 version: 2
 jobs:
-  build:
+  deploy_qa:
+    working_directory: ~/clickclack-web
     docker:
-      - image: circleci/mongo:latest
-      - image: circleci/node:latest
+      - image: circleci/openjdk:8u181-jdk-node-browsers-legacy
     steps:
-      - checkout
+      - clone project from github
       - run:
-          name: start local
-          command: echo starting in local
+          name: clone command
+          command: git clone --branch "master" --depth 50 git@github.com:thorium-e2e/clickclack-web.git ~/clickclack-web
+      - push project to heroku qa
       - run:
-          name: test local
-          command: echo test in local
-  unit_tests:
+          name: push qa command
+          command: git push https://heroku:3a12d835-fb52-4977-946b-7a0c30a0bad5@git.heroku.com/rec-clickclack-web.git master
+  tests:
+    working_directory: ~/clickclack-web-tests
     docker:
-      - image: circleci/buildpack-deps
+      - image: circleci/openjdk:8u181-jdk-node-browsers-legacy
     steps:
+      - clone project from github
       - run:
-          name: start rec
-          command: echo push to heroku rec
+          name: clone command
+          command: git clone --branch "master" --depth 50 git@github.com:thorium-e2e/clickclack-web-tests.git ~/clickclack-web-tests
+      - run tests with maven
       - run:
-          name: test rec
-          command: echo test rec
-  integration_tests:
-    docker:
-      - image: circleci/buildpack-deps
-    steps:
-      - run:
-          name: start rec
-          command: echo push to heroku rec
-      - run:
-          name: test rec
-          command: echo test rec
-  acceptance_tests:
-    docker:
-      - image: circleci/buildpack-deps
-    steps:
-      - run:
-          name: start rec
-          command: echo push to heroku rec
-      - run:
-          name: test rec
-          command: echo test rec
-  end_to_end_tests:
-    docker:
-      - image: circleci/buildpack-deps
-    steps:
-      - run:
-          name: start rec
-          command: echo push to heroku rec
-      - run:
-          name: test rec
-          command: echo test rec
-  deploy_rec:
-    docker:
-      - image: circleci/buildpack-deps
-    steps:
-      - run:
-          name: start prod
-          command: echo push to heroku prod
-      - run:
-          name: test prod
-          command: echo test prod
-  unit_tests_rec:
-    docker:
-      - image: circleci/buildpack-deps
-    steps:
-      - run:
-          name: start rec
-          command: echo push to heroku rec
-      - run:
-          name: test rec
-          command: echo test rec
-  integration_tests_rec:
-    docker:
-      - image: circleci/buildpack-deps
-    steps:
-      - run:
-          name: start rec
-          command: echo push to heroku rec
-      - run:
-          name: test rec
-          command: echo test rec
-  acceptance_tests_rec:
-    docker:
-      - image: circleci/buildpack-deps
-    steps:
-      - run:
-          name: start rec
-          command: echo push to heroku rec
-      - run:
-          name: test rec
-          command: echo test rec
-  end_to_end_tests_rec:
-    docker:
-      - image: circleci/buildpack-deps
-    steps:
-      - run:
-          name: start rec
-          command: echo push to heroku rec
-      - run:
-          name: test rec
-          command: echo test rec
+          name: mvn test
+          command: mvn test
+
   deploy_prod:
+    working_directory: ~/clickclack-web
     docker:
-      - image: circleci/buildpack-deps
+      - image: circleci/openjdk:8u181-jdk-node-browsers-legacy
     steps:
+      - push project to heroku qa
       - run:
-          name: start prod
-          command: echo push to heroku prod
-      - run:
-          name: test prod
-          command: echo test prod
-  unit_tests_prod:
-    docker:
-      - image: circleci/buildpack-deps
-    steps:
-      - run:
-          name: start rec
-          command: echo push to heroku rec
-      - run:
-          name: test rec
-          command: echo test rec
-  integration_tests_prod:
-    docker:
-      - image: circleci/buildpack-deps
-    steps:
-      - run:
-          name: start rec
-          command: echo push to heroku rec
-      - run:
-          name: test rec
-          command: echo test rec
-  acceptance_tests_prod:
-    docker:
-      - image: circleci/buildpack-deps
-    steps:
-      - run:
-          name: start rec
-          command: echo push to heroku rec
-      - run:
-          name: test rec
-          command: echo test rec
-  end_to_end_tests_prod:
-    docker:
-      - image: circleci/buildpack-deps
-    steps:
-      - run:
-          name: start rec
-          command: echo push to heroku rec
-      - run:
-          name: test rec
-          command: echo test rec
+          name: push qa command
+          command: git push https://heroku:3a12d835-fb52-4977-946b-7a0c30a0bad5@git.heroku.com/clickclack-web.git master
+
 
 workflows:
   version: 2
   build_accept_deploy:
     jobs:
-      - build
-      - unit_tests:
+      - deploy_qa
+      - tests:
           requires:
-            - build
-      - integration_tests:
-          requires:
-            - build
-      - acceptance_tests:
-          requires:
-            - build
-      - end_to_end_tests:
-          requires:
-            - build
-      - deploy_rec:
-          requires:
-            - unit_tests
-            - integration_tests
-            - acceptance_tests
-            - end_to_end_tests
-      - unit_tests_rec:
-          requires:
-            - deploy_rec
-      - integration_tests_rec:
-          requires:
-            - deploy_rec
-      - acceptance_tests_rec:
-          requires:
-            - deploy_rec
-      - end_to_end_tests_rec:
-          requires:
-            - deploy_rec
+            - deploy_qa
       - deploy_prod:
           requires:
-            - unit_tests_rec
-            - integration_tests_rec
-            - acceptance_tests_rec
-            - end_to_end_tests_rec
-      - unit_tests_prod:
-          requires:
-            - deploy_prod
-      - integration_tests_prod:
-          requires:
-            - deploy_prod
-      - acceptance_tests_prod:
-          requires:
-            - deploy_prod
-      - end_to_end_tests_prod:
-          requires:
-            - deploy_prod
+            - tests
